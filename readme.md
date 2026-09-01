@@ -1,0 +1,3 @@
+Project descrpition as provided:
+
+The Teaching Assistant Scheduler (TAS) is a system designed to automate and optimize the assignment of teaching assistants (TAs) to courses, lab sessions, and office hours within an academic institution. Built using object-oriented programming (OOP) principles, the system ensures modularity, scalability, and maintainability. TAS supports administrators and faculty in managing workloads, avoiding scheduling conflicts, and ensuring fair distribution of responsibilities based on qualifications, availability, and preferences.
