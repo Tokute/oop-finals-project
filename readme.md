@@ -39,9 +39,9 @@ Project descrpition as provided:
 
 ## Checklist / TO-DO
 
-[x] Integrate user preferences into compatibleShifts() logic
-[x] Refactor compatibleShifts() to return aggregated multi-shift arrays rather than printing individual lines
-[x] Finalize stress and workload tracking architecture
-[x] Implement Login/Sign-Up workflows for Admin and User roles
-[x] Develop "ID Creator" utility for unique identifier generation
-[x] Establish local text-based database structure (database.txt)
+- [x] Integrate user preferences into compatibleShifts() logic
+- [x] Refactor compatibleShifts() to return aggregated multi-shift arrays rather than printing individual lines
+- [x] Finalize stress and workload tracking architecture
+- [x] Implement Login/Sign-Up workflows for Admin and User roles
+- [x] Develop "ID Creator" utility for unique identifier generation
+- [x] Establish local text-based database structure (database.txt)
