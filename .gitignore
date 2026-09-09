@@ -1,5 +1,5 @@
 # ignore class files
-.class
+*.class
 
 # ignore txt files (for now)
-.txt
+*.txt
