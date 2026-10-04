@@ -46,7 +46,7 @@ Project descrpition as provided:
 
 - [x] Integrate user preferences into compatibleShifts() logic
 - [x] Refactor compatibleShifts() to return aggregated multi-shift arrays rather than printing individual lines
-- [ ] Finalize stress and workload tracking architecture
+- [~] Abandoned stress/workload tracking architecture (simplified data model by removing unused fields)
 - [ ] Implement Login/Sign-Up workflows for Admin and User roles
 - [x] Develop "ID Creator" utility for unique identifier generation
 - [ ] Establish local text-based database structure (database.txt)
@@ -72,3 +72,18 @@ Project descrpition as provided:
   - Teaching Task IDs: TT-001, TT-002, ...
   - Grading Task IDs: GT-001, GT-002, ...
 - Replaced hardcoded IDs in Main.java with IDCreator-generated IDs
+
+### Interactive Registration System
+- Added new menu option "4. Register new User or Task" for dynamic object creation
+- Implemented terminal-based input prompts for all required fields:
+  - TeachingAssistant: name, password, expertise, preferences, time details
+  - TeachingTask: name, work hours, expertise, preference, time occupied, course type
+  - GradingTask: name, work hours, expertise, preference, time occupied, total papers
+- Created parameterized factory methods in Main.java for flexible object creation with customizable properties
+- Added helper method for parsing comma-separated string inputs into arrays
+
+### Unique Test Data Generation
+- Enhanced initialization to generate 3 unique TeachingAssistant users with varying expertise, preferences, and schedules
+- Generated 3 unique TeachingTask objects with different subjects, work hours, and course types
+- Generated 3 unique GradingTask objects with varying workloads, expertise, and paper counts
+- All test data uses meaningful differences in properties (not just unique IDs) for better demonstration
