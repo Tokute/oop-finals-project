@@ -49,7 +49,7 @@ Project descrpition as provided:
 - [~] Abandoned stress/workload tracking architecture (simplified data model by removing unused fields)
 - [ ] Implement Login/Sign-Up workflows for Admin and User roles
 - [x] Develop "ID Creator" utility for unique identifier generation
-- [ ] Establish local text-based database structure (database.txt)
+- [x] Establish local text-based database structure (database.txt)
 
 ---
 
@@ -87,3 +87,12 @@ Project descrpition as provided:
 - Generated 3 unique TeachingTask objects with different subjects, work hours, and course types
 - Generated 3 unique GradingTask objects with varying workloads, expertise, and paper counts
 - All test data uses meaningful differences in properties (not just unique IDs) for better demonstration
+
+### Local Database Persistence
+- Added local text-based database persistence using `database.txt`
+- Implemented `loadFromDatabase()` method called on ScheduleManager startup
+- Implemented `saveToDatabase()` method called after registrations
+- Prevents test data regeneration on subsequent runs (first-run only via database existence check)
+- Interactive registrations (menu options 1-3) now persist immediately to database
+- Added getter/setter methods to Task classes for database serialization
+- Fixes exponential database growth when running program multiple times
