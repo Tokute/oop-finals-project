@@ -9,6 +9,14 @@ public class GradingTask extends Task {
         this.totalPapers = totalPapers;
     }
 
+    public int getTotalPapers() {
+        return this.totalPapers;
+    }
+
+    public void setTotalPapers(int totalPapers) {
+        this.totalPapers = totalPapers;
+    }
+
     @Override
     public void printDetails() {
         super.printDetails();
