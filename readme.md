@@ -30,18 +30,45 @@ Project descrpition as provided:
 
     ├── Main.java                 # Entry point and command-line user interface loop
     ├── ScheduleManager.java      # Core system controller and matching algorithms
-    ├── User.java                 # Abstract base class for user accounts
-    ├── Admin.java                # Administrator role implementation
-    ├── TeachingAssistant.java    # Teaching assistant role implementation
-    ├── Task.java                 # Abstract base class for tasks
-    ├── TeachingTask.java         # Teaching and lab session task subclass
-    └── GradingTask.java          # Grading assignment task subclass
+    ├── IDCreator.java            # Utility for generating unique identifiers
+    ├── users/                    # User-related classes
+    │   ├── User.java             # Abstract base class for user accounts
+    │   ├── Admin.java            # Administrator role implementation
+    │   └── TeachingAssistant.java # Teaching assistant role implementation
+    └── tasks/                    # Task-related classes
+        ├── Task.java             # Abstract base class for tasks
+        ├── TeachingTask.java     # Teaching and lab session task subclass
+        └── GradingTask.java      # Grading assignment task subclass
+
+---
 
 ## Checklist / TO-DO
 
-- [ ] Integrate user preferences into compatibleShifts() logic
-- [ ] Refactor compatibleShifts() to return aggregated multi-shift arrays rather than printing individual lines
+- [x] Integrate user preferences into compatibleShifts() logic
+- [x] Refactor compatibleShifts() to return aggregated multi-shift arrays rather than printing individual lines
 - [ ] Finalize stress and workload tracking architecture
 - [ ] Implement Login/Sign-Up workflows for Admin and User roles
-- [ ] Develop "ID Creator" utility for unique identifier generation
+- [x] Develop "ID Creator" utility for unique identifier generation
 - [ ] Establish local text-based database structure (database.txt)
+
+---
+
+## Recent Improvements
+
+### File Organization
+- Reorganized domain classes into meaningful packages:
+  - `users/` package: User, Admin, TeachingAssistant classes
+  - `tasks/` package: Task, TeachingTask, GradingTask classes
+- Added proper package declarations and updated imports
+
+### Enhanced Matching Logic
+- **Integrated user preferences**: The system now checks if a Teaching Assistant's shift preferences (e.g., "Morning", "Flexible") match a task's preferred timing before considering them compatible
+- **Aggregated output**: Compatible shifts are now aggregated by TA-task pair, showing all matching time slots in a single entry (e.g., "Alice can take Java Tutoring at [Tue 09:00-15:00, Thu 09:00-15:00]")
+
+### ID Generation
+- Added `IDCreator.java` utility class for generating unique sequential IDs:
+  - Admin IDs: A-001, A-002, ...
+  - Teaching Assistant IDs: TA-001, TA-002, ...
+  - Teaching Task IDs: TT-001, TT-002, ...
+  - Grading Task IDs: GT-001, GT-002, ...
+- Replaced hardcoded IDs in Main.java with IDCreator-generated IDs
