@@ -47,7 +47,6 @@ public class Main {
                             "Java Tutoring",
                             IDCreator.createTeachingTaskID(),
                             6.0,
-                            2,
                             new String[]{"Java", "OOP"},
                             new String[]{"Morning"},
                             new String[]{"Tue 09:00-15:00", "Thu 09:00-15:00"},
@@ -63,8 +62,6 @@ public class Main {
                             "Essay Grading",
                             IDCreator.createGradingTaskID(),
                             5.0,
-                            1.2,
-                            4,
                             new String[]{"Writing", "Assessment"},
                             new String[]{"Night"},
                             new String[]{"Fri 13:00-18:00"},
@@ -85,6 +82,7 @@ public class Main {
 
                 case 6:
                     manager.calculateAvailableShift();
+                    System.out.println("==============================");
                     System.out.println("\nCompatible shifts:");
                     if (manager.getCompatibleShifts().isEmpty()) {
                         System.out.println("No compatible assignment found.");
@@ -93,6 +91,7 @@ public class Main {
                             System.out.println(shift);
                         }
                     }
+                    System.out.println("\n==============================");
                     break;
 
                 case 7:
@@ -112,7 +111,6 @@ public class Main {
                 "Alice",
                 "pass123",
                 IDCreator.createTeachingAssistantID(),
-                2,
                 new String[]{"Java", "Math", "Algorithms", "Writing"},
                 new String[]{"Morning", "Flexible"},
                 new String[]{"Tue 00:00-23:59", "Wed 00:00-23:59", "Fri 00:00-23:59"}
