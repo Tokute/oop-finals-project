@@ -136,7 +136,7 @@ public class ScheduleManager {
                 String taName = ta.getName();
                 String taskName = task.getName();
                 String timesList = String.join(", ", matchingTimes);
-                compatibleShifts.add(taName + " can take " + taskName + " at [" + timesList + "]");
+                compatibleShifts.add(taName + " can take " + taskName + " at:\t[" + timesList + "]");
             }
         }
     }
