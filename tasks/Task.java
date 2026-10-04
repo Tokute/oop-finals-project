@@ -1,3 +1,7 @@
+package tasks;
+
+import users.TeachingAssistant;
+
 public abstract class Task {
     private String name;
     private String id;
@@ -24,7 +28,7 @@ public abstract class Task {
     }
 
     public void printDetails() {
-        System.out.printf("Name: %s\n", this.name);
+        System.out.printf("\nName: %s\n", this.name);
         System.out.printf("ID: %s\n", this.id);
         System.out.printf("Work Hours: %.2f\n", this.workHours);
         System.out.printf("Stress: %.2f\n", this.stress);

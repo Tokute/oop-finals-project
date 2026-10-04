@@ -1,4 +1,8 @@
 import java.util.ArrayList;
+import users.User;
+import users.Admin;
+import users.TeachingAssistant;
+import tasks.Task;
 
 public class ScheduleManager {
     private ArrayList<User> registeredUsers;

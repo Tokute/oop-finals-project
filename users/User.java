@@ -1,3 +1,5 @@
+package users;
+
 public abstract class User {
     private String name;
     private String password;
@@ -60,6 +62,6 @@ public abstract class User {
     }
 
     public void printDetails() {
-        System.out.printf("Name:    %s\nID:     %s\n", this.name, this.id);
+        System.out.printf("\nName:    %s\nID:     %s\n", this.name, this.id);
     }
 }

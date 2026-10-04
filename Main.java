@@ -1,4 +1,9 @@
 import java.util.Scanner;
+import users.Admin;
+import users.TeachingAssistant;
+import tasks.Task;
+import tasks.TeachingTask;
+import tasks.GradingTask;
 
 public class Main {
     public static void main(String[] args) {
@@ -80,7 +85,7 @@ public class Main {
 
                 case 6:
                     manager.calculateAvailableShift();
-                    System.out.println("Compatible shifts:");
+                    System.out.println("\nCompatible shifts:");
                     if (manager.getCompatibleShifts().isEmpty()) {
                         System.out.println("No compatible assignment found.");
                     } else {

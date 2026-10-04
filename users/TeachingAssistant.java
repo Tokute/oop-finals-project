@@ -1,10 +1,12 @@
+package users;
+
 public class TeachingAssistant extends User {
     private double workload;
-    private final int WORKLOAD_MAX = 5; // This concept is still yet to be approved.
-    private String[] expertise;    
+    private final int WORKLOAD_MAX = 5;
+    private String[] expertise;
     private String[] preferences;
     private String[] availableTime;
-    
+
     public TeachingAssistant(String name, String password, String id, double workload, String[] expertise, String[] preferences, String[] availableTime) {
         super(name, password, id);
         this.availableTime = availableTime;
@@ -45,7 +47,7 @@ public class TeachingAssistant extends User {
         this.availableTime = availableTime;
     }
 
-    public boolean isOverloaded() { // This concept is still yet to be approved.
+    public boolean isOverloaded() {
         return (this.workload >= WORKLOAD_MAX);
     }
 

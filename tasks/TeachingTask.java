@@ -1,3 +1,5 @@
+package tasks;
+
 public class TeachingTask extends Task {
     private String subject;
 
