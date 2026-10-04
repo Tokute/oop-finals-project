@@ -7,21 +7,13 @@ import tasks.GradingTask;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        var scanner = new Scanner(System.in);
         ScheduleManager manager = new ScheduleManager();
         Admin admin = new Admin("Admin User", "pass123", IDCreator.createAdminID());
         manager.registerUser(admin, admin);
 
         while (true) {
-            System.out.println();
-            System.out.println("========== Main Menu ==========");
-            System.out.println("1. Register sample TeachingAssistant");
-            System.out.println("2. Register sample TeachingTask");
-            System.out.println("3. Register sample GradingTask");
-            System.out.println("4. View all users");
-            System.out.println("5. View all tasks");
-            System.out.println("6. Check compatible shifts");
-            System.out.println("7. Exit");
+            printMenu();
             System.out.print("Choose an option: ");
 
             String input = scanner.nextLine();
@@ -43,30 +35,14 @@ public class Main {
                     break;
 
                 case 2:
-                    Task teachingTask = new TeachingTask(
-                            "Java Tutoring",
-                            IDCreator.createTeachingTaskID(),
-                            6.0,
-                            new String[]{"Java", "OOP"},
-                            new String[]{"Morning"},
-                            new String[]{"Tue 09:00-15:00", "Thu 09:00-15:00"},
-                            "Programming"
-                    );
+                    Task teachingTask = createTeachingTask();
                     manager.registerTask(teachingTask, admin);
                     System.out.println("TeachingTask registered successfully.");
                     teachingTask.printDetails();
                     break;
 
                 case 3:
-                    Task gradingTask = new GradingTask(
-                            "Essay Grading",
-                            IDCreator.createGradingTaskID(),
-                            5.0,
-                            new String[]{"Writing", "Assessment"},
-                            new String[]{"Night"},
-                            new String[]{"Fri 13:00-18:00"},
-                            40
-                    );
+                    Task gradingTask = createGradingTask();
                     manager.registerTask(gradingTask, admin);
                     System.out.println("GradingTask registered successfully.");
                     gradingTask.printDetails();
@@ -106,6 +82,18 @@ public class Main {
         }
     }
 
+    private static void printMenu() {
+        System.out.println();
+        System.out.println("========== Main Menu ==========");
+        System.out.println("1. Register sample TeachingAssistant");
+        System.out.println("2. Register sample TeachingTask");
+        System.out.println("3. Register sample GradingTask");
+        System.out.println("4. View all users");
+        System.out.println("5. View all tasks");
+        System.out.println("6. Check compatible shifts");
+        System.out.println("7. Exit");
+    }
+
     private static TeachingAssistant createTeachingAssistant() {
         return new TeachingAssistant(
                 "Alice",
@@ -114,6 +102,30 @@ public class Main {
                 new String[]{"Java", "Math", "Algorithms", "Writing"},
                 new String[]{"Morning", "Flexible"},
                 new String[]{"Tue 00:00-23:59", "Wed 00:00-23:59", "Fri 00:00-23:59"}
+        );
+    }
+
+    private static Task createTeachingTask() {
+        return new TeachingTask(
+                "Java Tutoring",
+                IDCreator.createTeachingTaskID(),
+                6.0,
+                new String[]{"Java", "OOP"},
+                new String[]{"Morning"},
+                new String[]{"Tue 09:00-15:00", "Thu 09:00-15:00"},
+                "Programming"
+        );
+    }
+
+    private static Task createGradingTask() {
+        return new GradingTask(
+                "Essay Grading",
+                IDCreator.createGradingTaskID(),
+                5.0,
+                new String[]{"Writing", "Assessment"},
+                new String[]{"Night"},
+                new String[]{"Fri 13:00-18:00"},
+                40
         );
     }
 }
