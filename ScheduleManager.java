@@ -118,16 +118,46 @@ public class ScheduleManager {
                     continue;
                 }
 
+                // Check preference compatibility
+                if (!isPreferenceCompatible(ta, task)) {
+                    continue;
+                }
+
                 ArrayList<String> matchingTimes = evaluateTimeOverlap(ta, task);
                 if (matchingTimes == null || matchingTimes.isEmpty()) {
                     continue;
                 }
 
+                // Aggregate matching times into a single string
                 String taName = ta.getName();
                 String taskName = task.getName();
-                compatibleShifts.add(taName + " can take " + taskName + " at " + matchingTimes);
+                String timesList = String.join(", ", matchingTimes);
+                compatibleShifts.add(taName + " can take " + taskName + " at [" + timesList + "]");
             }
         }
+    }
+
+    private boolean isPreferenceCompatible(TeachingAssistant ta, Task task) {
+        String[] taPreferences = ta.getPreferences();
+        String[] taskPreferences = task.getPreference();
+
+        // If either array is null or empty, consider it compatible (no preference constraint)
+        if (taPreferences == null || taskPreferences == null ||
+            taPreferences.length == 0 || taskPreferences.length == 0) {
+            return true;
+        }
+
+        // Check if any TA preference matches any task preference
+        for (String taPref : taPreferences) {
+            for (String taskPref : taskPreferences) {
+                if (taPref != null && taskPref != null &&
+                    taPref.equalsIgnoreCase(taskPref)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public ArrayList<String> getCompatibleShifts() {
