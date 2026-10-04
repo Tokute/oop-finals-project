@@ -6,22 +6,18 @@ public abstract class Task {
     private String name;
     private String id;
     private double workHours;
-    private double stress;
-    private double workload;
     private String[] expertise;
     private String[] preference;
     private String[] timeOccupied;
 
-    public Task(String name, String id, double workHours, double stress,
+    public Task(String name, String id, double workHours,
                 String[] expertise, String[] preference, String[] timeOccupied) {
         this.name = name;
         this.id = id;
         this.workHours = workHours;
-        this.stress = stress;
         this.expertise = expertise;
         this.preference = preference;
         this.timeOccupied = timeOccupied;
-        calculateWorkload();
     }
 
     public Task() {
@@ -31,8 +27,6 @@ public abstract class Task {
         System.out.printf("\nName: %s\n", this.name);
         System.out.printf("ID: %s\n", this.id);
         System.out.printf("Work Hours: %.2f\n", this.workHours);
-        System.out.printf("Stress: %.2f\n", this.stress);
-        System.out.printf("Workload: %.2f\n", this.workload);
         System.out.printf("Expertise: %s\n", String.join(", ", this.expertise));
         System.out.printf("Preference: %s\n", String.join(", ", this.preference));
         System.out.printf("Time Occupied: %s\n", String.join(", ", this.timeOccupied));
@@ -64,10 +58,6 @@ public abstract class Task {
         return false;
     }
 
-    private void calculateWorkload() {
-        this.workload = (workHours * 0.5) + stress;
-    }
-
     public String getName() {
         return this.name;
     }
@@ -90,24 +80,6 @@ public abstract class Task {
 
     public void setWorkHours(double workHours) {
         this.workHours = workHours;
-        calculateWorkload();
-    }
-
-    public double getStress() {
-        return this.stress;
-    }
-
-    public void setStress(double stress) {
-        this.stress = stress;
-        calculateWorkload();
-    }
-
-    public double getWorkload() {
-        return this.workload;
-    }
-
-    public void setWorkload(double workload) {
-        this.workload = workload;
     }
 
     public String[] getExpertise() {

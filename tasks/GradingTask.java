@@ -3,9 +3,9 @@ package tasks;
 public class GradingTask extends Task {
     private int totalPapers;
 
-    public GradingTask(String name, String id, double workHours, double stress, int workload,
+    public GradingTask(String name, String id, double workHours,
                 String[] expertise, String[] preference, String[] timeOccupied, int totalPapers) {
-        super(name, id, workHours, 1.2, expertise, preference, timeOccupied);
+        super(name, id, workHours, expertise, preference, timeOccupied);
         this.totalPapers = totalPapers;
     }
 

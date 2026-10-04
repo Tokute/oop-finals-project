@@ -3,10 +3,10 @@ package tasks;
 public class TeachingTask extends Task {
     private String subject;
 
-    public TeachingTask(String name, String id, double workHours, int workload,
+    public TeachingTask(String name, String id, double workHours,
                 String[] expertise, String[] preference, String[] timeOccupied,
                 String subject) {
-        super(name, id, workHours, 1.5, expertise, preference, timeOccupied);
+        super(name, id, workHours, expertise, preference, timeOccupied);
         this.subject = subject;
     }
 
