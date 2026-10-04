@@ -4,7 +4,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         ScheduleManager manager = new ScheduleManager();
-        Admin admin = new Admin("Admin User", "admin123", "A-001");
+        Admin admin = new Admin("Admin User", "pass123", IDCreator.createAdminID());
         manager.registerUser(admin, admin);
 
         while (true) {
@@ -40,7 +40,7 @@ public class Main {
                 case 2:
                     Task teachingTask = new TeachingTask(
                             "Java Tutoring",
-                            "TT-01",
+                            IDCreator.createTeachingTaskID(),
                             6.0,
                             2,
                             new String[]{"Java", "OOP"},
@@ -56,7 +56,7 @@ public class Main {
                 case 3:
                     Task gradingTask = new GradingTask(
                             "Essay Grading",
-                            "GT-01",
+                            IDCreator.createGradingTaskID(),
                             5.0,
                             1.2,
                             4,
@@ -106,7 +106,7 @@ public class Main {
         return new TeachingAssistant(
                 "Alice",
                 "pass123",
-                "TA-001",
+                IDCreator.createTeachingAssistantID(),
                 2,
                 new String[]{"Java", "Math", "Algorithms", "Writing"},
                 new String[]{"Morning", "Flexible"},
