@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.Scanner;
 import users.Admin;
 import users.User;
@@ -5,7 +6,7 @@ import tasks.Task;
 import utils.IDCreator;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         var scanner = new Scanner(System.in);
         ScheduleManager manager = new ScheduleManager();
 
