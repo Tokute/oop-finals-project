@@ -106,6 +106,77 @@ public class ScheduleManager {
         }
     }
 
+    public boolean updateUser(User updatedUser, Admin requester) throws IOException {
+        if (requester == null || updatedUser == null) {
+            return false;
+        }
+
+        int userIndex = findUserIndex(updatedUser.getId());
+        if (userIndex < 0) {
+            return false;
+        }
+
+        User originalUser = registeredUsers.get(userIndex);
+        if (originalUser.getClass() != updatedUser.getClass()) {
+            return false;
+        }
+
+        if (originalUser instanceof TeachingAssistant) {
+            int assistantIndex = registeredTeachingAssistants.indexOf(originalUser);
+            if (assistantIndex >= 0) {
+                registeredTeachingAssistants.set(assistantIndex, (TeachingAssistant) updatedUser);
+            }
+        }
+        registeredUsers.set(userIndex, updatedUser);
+
+        try {
+            saveToDatabase();
+        } catch (IOException e) {
+            registeredUsers.set(userIndex, originalUser);
+            if (originalUser instanceof TeachingAssistant) {
+                int assistantIndex = registeredTeachingAssistants.indexOf(updatedUser);
+                if (assistantIndex >= 0) {
+                    registeredTeachingAssistants.set(assistantIndex, (TeachingAssistant) originalUser);
+                }
+            }
+            throw e;
+        }
+        return true;
+    }
+
+    public boolean deleteUser(String userId, Admin requester) throws IOException {
+        if (requester == null) {
+            return false;
+        }
+
+        int userIndex = findUserIndex(userId);
+        if (userIndex < 0) {
+            return false;
+        }
+
+        User user = registeredUsers.get(userIndex);
+        if (user instanceof Admin && countAdmins() <= 1) {
+            throw new IllegalStateException("Cannot delete the last administrator.");
+        }
+
+        int assistantIndex = registeredTeachingAssistants.indexOf(user);
+        registeredUsers.remove(userIndex);
+        if (assistantIndex >= 0) {
+            registeredTeachingAssistants.remove(assistantIndex);
+        }
+
+        try {
+            saveToDatabase();
+        } catch (IOException e) {
+            registeredUsers.add(userIndex, user);
+            if (assistantIndex >= 0) {
+                registeredTeachingAssistants.add(assistantIndex, (TeachingAssistant) user);
+            }
+            throw e;
+        }
+        return true;
+    }
+
     public void registerTask(Task newTask, Admin requester) {
         if (requester == null) {
             return;
@@ -130,6 +201,46 @@ public class ScheduleManager {
             registeredTasks.remove(newTask);
             throw e;
         }
+    }
+
+    public boolean updateTask(Task updatedTask, Admin requester) throws IOException {
+        if (requester == null || updatedTask == null) {
+            return false;
+        }
+
+        int taskIndex = findTaskIndex(updatedTask.getId());
+        if (taskIndex < 0 || registeredTasks.get(taskIndex).getClass() != updatedTask.getClass()) {
+            return false;
+        }
+
+        Task originalTask = registeredTasks.set(taskIndex, updatedTask);
+        try {
+            saveToDatabase();
+        } catch (IOException e) {
+            registeredTasks.set(taskIndex, originalTask);
+            throw e;
+        }
+        return true;
+    }
+
+    public boolean deleteTask(String taskId, Admin requester) throws IOException {
+        if (requester == null) {
+            return false;
+        }
+
+        int taskIndex = findTaskIndex(taskId);
+        if (taskIndex < 0) {
+            return false;
+        }
+
+        Task task = registeredTasks.remove(taskIndex);
+        try {
+            saveToDatabase();
+        } catch (IOException e) {
+            registeredTasks.add(taskIndex, task);
+            throw e;
+        }
+        return true;
     }
 
     public void calculateAvailableShift() {
@@ -200,6 +311,10 @@ public class ScheduleManager {
         return new ArrayList<>(registeredUsers);
     }
 
+    public ArrayList<Task> getRegisteredTasks() {
+        return new ArrayList<>(registeredTasks);
+    }
+
     public ArrayList<String> evaluateTimeOverlap(TeachingAssistant ta, Task task) {
         if (ta == null) {
             return new ArrayList<>();
@@ -225,5 +340,33 @@ public class ScheduleManager {
 
     public void saveToDatabase() throws IOException {
         repository.save(registeredUsers, registeredTasks);
+    }
+
+    private int findUserIndex(String userId) {
+        for (int i = 0; i < registeredUsers.size(); i++) {
+            if (registeredUsers.get(i).getId().equals(userId)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int findTaskIndex(String taskId) {
+        for (int i = 0; i < registeredTasks.size(); i++) {
+            if (registeredTasks.get(i).getId().equals(taskId)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int countAdmins() {
+        int count = 0;
+        for (User user : registeredUsers) {
+            if (user instanceof Admin) {
+                count++;
+            }
+        }
+        return count;
     }
 }
