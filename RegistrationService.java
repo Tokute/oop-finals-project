@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -51,6 +52,8 @@ public class RegistrationService {
                     System.out.println("Invalid choice. Please try again.");
                     break;
             }
+        } catch (IOException e) {
+            System.out.println("Registration failed because the database could not be saved: " + e.getMessage());
         } catch (IllegalArgumentException e) {
             System.out.println("Error: " + e.getMessage());
         } catch (Exception e) {
@@ -58,7 +61,7 @@ public class RegistrationService {
         }
     }
 
-    public void registerTeachingAssistant() {
+    public void registerTeachingAssistant() throws IOException {
         System.out.println();
         System.out.println("=== Register TeachingAssistant ===");
 
@@ -77,18 +80,19 @@ public class RegistrationService {
                 String[] timeDetails = readTimeDetails();
                 TeachingAssistant ta = createTeachingAssistant(name, password, expertise, preferences, timeDetails);
 
-                manager.registerTeachingAssistant(ta, admin);
-                manager.saveToDatabase();
+                manager.registerTeachingAssistantAndSave(ta, admin);
                 System.out.println("TeachingAssistant registered successfully!");
                 ta.printDetails();
                 return;
-            } catch (Exception e) {
+            } catch (IOException e) {
+                throw e;
+            } catch (IllegalArgumentException e) {
                 System.out.println("Error: " + e.getMessage());
             }
         }
     }
 
-    public void registerTeachingTask() {
+    public void registerTeachingTask() throws IOException {
         System.out.println();
         System.out.println("=== Register TeachingTask ===");
         System.out.print("Enter name: ");
@@ -108,7 +112,7 @@ public class RegistrationService {
         registerTask(task, "TeachingTask");
     }
 
-    public void registerGradingTask() {
+    public void registerGradingTask() throws IOException {
         System.out.println();
         System.out.println("=== Register GradingTask ===");
         System.out.print("Enter name: ");
@@ -148,9 +152,8 @@ public class RegistrationService {
                 name, IDCreator.createGradingTaskID(), workHours, expertise, preference, timeOccupied, totalPapers);
     }
 
-    private void registerTask(Task task, String taskType) {
-        manager.registerTask(task, admin);
-        manager.saveToDatabase();
+    private void registerTask(Task task, String taskType) throws IOException {
+        manager.registerTaskAndSave(task, admin);
         System.out.println(taskType + " registered successfully!");
         task.printDetails();
     }
