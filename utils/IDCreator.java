@@ -22,6 +22,46 @@ public class IDCreator {
         return String.format("GT-%03d", gradingTaskCounter++);
     }
 
+    public static void observeExistingId(String id) {
+        if (id == null) {
+            return;
+        }
+
+        int separatorIndex = id.lastIndexOf('-');
+        if (separatorIndex < 0 || separatorIndex == id.length() - 1) {
+            return;
+        }
+
+        int existingNumber;
+        try {
+            existingNumber = Integer.parseInt(id.substring(separatorIndex + 1));
+        } catch (NumberFormatException e) {
+            return;
+        }
+
+        if (existingNumber < 1) {
+            return;
+        }
+
+        String prefix = id.substring(0, separatorIndex);
+        switch (prefix) {
+            case "A":
+                adminCounter = Math.max(adminCounter, existingNumber + 1);
+                break;
+            case "TA":
+                taCounter = Math.max(taCounter, existingNumber + 1);
+                break;
+            case "TT":
+                teachingTaskCounter = Math.max(teachingTaskCounter, existingNumber + 1);
+                break;
+            case "GT":
+                gradingTaskCounter = Math.max(gradingTaskCounter, existingNumber + 1);
+                break;
+            default:
+                break;
+        }
+    }
+
     // Reset counters (useful for testing)
     public static void reset() {
         adminCounter = 1;
