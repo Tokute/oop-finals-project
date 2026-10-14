@@ -1,9 +1,13 @@
 import java.io.IOException;
 import java.util.Scanner;
 import users.Admin;
+import users.TeachingAssistant;
 import users.User;
+import tasks.GradingTask;
 import tasks.Task;
+import tasks.TeachingTask;
 import utils.IDCreator;
+import utils.TimeUtils;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -176,6 +180,14 @@ public class Main {
                     break;
 
                 case 5:
+                    modifyRecord(scanner, manager, admin);
+                    break;
+
+                case 6:
+                    deleteRecord(scanner, manager, admin);
+                    break;
+
+                case 7:
                     System.out.println("Exiting program...");
                     scanner.close();
                     return;
@@ -194,7 +206,179 @@ public class Main {
         System.out.println("2. View all tasks");
         System.out.println("3. Check compatible shifts");
         System.out.println("4. Register new User or Task");
-        System.out.println("5. Exit");
+        System.out.println("5. Modify a User or Task");
+        System.out.println("6. Delete a User or Task");
+        System.out.println("7. Exit");
+    }
+
+    private static void modifyRecord(Scanner scanner, ScheduleManager manager, Admin admin) {
+        System.out.println("Modify which record?");
+        System.out.println("1. User");
+        System.out.println("2. Task");
+        System.out.print("Enter your choice: ");
+
+        String type = scanner.nextLine().trim();
+        try {
+            if ("1".equals(type)) {
+                modifyUser(scanner, manager, admin);
+            } else if ("2".equals(type)) {
+                modifyTask(scanner, manager, admin);
+            } else {
+                System.out.println("Invalid choice.");
+            }
+        } catch (IOException e) {
+            System.out.println("Could not save the modification: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid modification: " + e.getMessage());
+        }
+    }
+
+    private static void modifyUser(Scanner scanner, ScheduleManager manager, Admin admin) throws IOException {
+        manager.viewUsers();
+        System.out.print("Enter the ID of the user to modify: ");
+        String id = scanner.nextLine().trim();
+        User existing = findUser(manager, id);
+        if (existing == null) {
+            System.out.println("No user found with ID " + id + ".");
+            return;
+        }
+
+        System.out.print("Enter name: ");
+        String name = scanner.nextLine().trim();
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+
+        User updated;
+        if (existing instanceof TeachingAssistant) {
+            System.out.print("Enter expertise (comma-separated): ");
+            String[] expertise = parseCommaSeparatedString(scanner.nextLine());
+            System.out.print("Enter preferences (comma-separated): ");
+            String[] preferences = parseCommaSeparatedString(scanner.nextLine());
+            String[] availableTime = TimeUtils.readValidatedTimeSlots(
+                    scanner, "Enter available times (comma-separated, format: Day HH:MM-HH:MM): ");
+            updated = new TeachingAssistant(name, password, existing.getId(),
+                    expertise, preferences, availableTime);
+        } else if (existing instanceof Admin) {
+            updated = new Admin(name, password, existing.getId());
+        } else {
+            System.out.println("This user type cannot be modified here.");
+            return;
+        }
+
+        if (manager.updateUser(updated, admin)) {
+            System.out.println("User updated successfully.");
+            updated.printDetails();
+        } else {
+            System.out.println("User could not be updated.");
+        }
+    }
+
+    private static void modifyTask(Scanner scanner, ScheduleManager manager, Admin admin) throws IOException {
+        manager.viewTasks();
+        System.out.print("Enter the ID of the task to modify: ");
+        String id = scanner.nextLine().trim();
+        Task existing = findTask(manager, id);
+        if (existing == null) {
+            System.out.println("No task found with ID " + id + ".");
+            return;
+        }
+
+        System.out.print("Enter name: ");
+        String name = scanner.nextLine().trim();
+        System.out.print("Enter work hours: ");
+        double workHours = Double.parseDouble(scanner.nextLine().trim());
+        System.out.print("Enter expertise (comma-separated): ");
+        String[] expertise = parseCommaSeparatedString(scanner.nextLine());
+        System.out.print("Enter preferences (comma-separated): ");
+        String[] preferences = parseCommaSeparatedString(scanner.nextLine());
+        String[] timeOccupied = TimeUtils.readValidatedTimeSlots(
+                scanner, "Enter occupied times (comma-separated, format: Day HH:MM-HH:MM): ");
+
+        Task updated;
+        if (existing instanceof TeachingTask) {
+            System.out.print("Enter course type: ");
+            String courseType = scanner.nextLine().trim();
+            updated = new TeachingTask(name, existing.getId(), workHours,
+                    expertise, preferences, timeOccupied, courseType);
+        } else if (existing instanceof GradingTask) {
+            System.out.print("Enter total papers: ");
+            int totalPapers = Integer.parseInt(scanner.nextLine().trim());
+            updated = new GradingTask(name, existing.getId(), workHours,
+                    expertise, preferences, timeOccupied, totalPapers);
+        } else {
+            System.out.println("This task type cannot be modified here.");
+            return;
+        }
+
+        if (manager.updateTask(updated, admin)) {
+            System.out.println("Task updated successfully.");
+            updated.printDetails();
+        } else {
+            System.out.println("Task could not be updated.");
+        }
+    }
+
+    private static void deleteRecord(Scanner scanner, ScheduleManager manager, Admin admin) {
+        System.out.println("Delete which record?");
+        System.out.println("1. User");
+        System.out.println("2. Task");
+        System.out.print("Enter your choice: ");
+
+        String type = scanner.nextLine().trim();
+        if (!"1".equals(type) && !"2".equals(type)) {
+            System.out.println("Invalid choice.");
+            return;
+        }
+
+        if ("1".equals(type)) {
+            manager.viewUsers();
+        } else {
+            manager.viewTasks();
+        }
+        System.out.print("Enter the ID of the record to delete: ");
+        String id = scanner.nextLine().trim();
+        System.out.print("Delete record " + id + "? (y/n): ");
+        String confirmation = scanner.nextLine().trim();
+        if (!confirmation.equalsIgnoreCase("y") && !confirmation.equalsIgnoreCase("yes")) {
+            System.out.println("Deletion cancelled.");
+            return;
+        }
+
+        try {
+            boolean deleted = "1".equals(type)
+                    ? manager.deleteUser(id, admin)
+                    : manager.deleteTask(id, admin);
+            System.out.println(deleted ? "Record deleted successfully." : "No matching record found.");
+        } catch (IOException e) {
+            System.out.println("Could not save the deletion: " + e.getMessage());
+        } catch (IllegalStateException e) {
+            System.out.println("Deletion not allowed: " + e.getMessage());
+        }
+    }
+
+    private static User findUser(ScheduleManager manager, String id) {
+        for (User user : manager.getRegisteredUsers()) {
+            if (user.getId().equals(id)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    private static Task findTask(ScheduleManager manager, String id) {
+        for (Task task : manager.getRegisteredTasks()) {
+            if (task.getId().equals(id)) {
+                return task;
+            }
+        }
+        return null;
+    }
+
+    private static String[] parseCommaSeparatedString(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            return new String[0];
+        }
+        return input.split("\\s*,\\s*");
     }
 
 }
