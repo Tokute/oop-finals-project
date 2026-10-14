@@ -1,10 +1,8 @@
 import java.util.Scanner;
 import users.Admin;
-import users.TeachingAssistant;
 import users.User;
 import tasks.Task;
-import tasks.TeachingTask;
-import tasks.GradingTask;
+import utils.IDCreator;
 
 public class Main {
     public static void main(String[] args) {
@@ -28,6 +26,7 @@ public class Main {
             manager.registerUser(admin, admin);
             manager.saveToDatabase();
         }
+        RegistrationService registrationService = new RegistrationService(scanner, manager, admin);
 
         // Only generate test data if database is empty (first run)
         if (generateTestData) {
@@ -49,7 +48,7 @@ public class Main {
             };
 
             for (int i = 0; i < 3; i++) {
-                TeachingAssistant ta = createTeachingAssistant(
+                users.TeachingAssistant ta = RegistrationService.createTeachingAssistant(
                     "TA_" + (i + 1),
                     "pass" + (i + 1) + "3",
                     taExpertise[i],
@@ -79,7 +78,7 @@ public class Main {
             String[] ttCourseTypes = {"Programming", "Data Analysis", "Systems"};
 
             for (int i = 0; i < 3; i++) {
-                Task teachingTask = createTeachingTask(
+                Task teachingTask = RegistrationService.createTeachingTask(
                     "Task_" + (i + 1),
                     ttWorkHours[i],
                     ttExpertise[i],
@@ -110,7 +109,7 @@ public class Main {
             int[] gtTotalPapers = {40, 25, 30};
 
             for (int i = 0; i < 3; i++) {
-                Task gradingTask = createGradingTask(
+                Task gradingTask = RegistrationService.createGradingTask(
                     "GradingTask_" + (i + 1),
                     gtWorkHours[i],
                     gtExpertise[i],
@@ -148,8 +147,13 @@ public class Main {
                     break;
 
                 case 3:
-                    manager.calculateAvailableShift();
-                    System.out.println("==============================");
+                    try {
+                        manager.calculateAvailableShift();
+                    } catch (Exception e) {
+                        System.err.println("An error occurred while checking compatible shifts: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                    System.out.println("===============================");
                     System.out.println("\nCompatible shifts:");
                     if (manager.getCompatibleShifts().isEmpty()) {
                         System.out.println("No compatible assignment found.");
@@ -158,11 +162,16 @@ public class Main {
                             System.out.println(shift);
                         }
                     }
-                    System.out.println("\n==============================");
+                    System.out.println("\n===============================");
                     break;
 
                 case 4:
-                    registerNewUserOrTask(scanner, manager, admin);
+                    try {
+                        registrationService.registerNewUserOrTask();
+                    } catch (Exception e) {
+                        System.err.println("An error occurred during registration: " + e.getMessage());
+                        e.printStackTrace();
+                    }
                     break;
 
                 case 5:
@@ -187,149 +196,4 @@ public class Main {
         System.out.println("5. Exit");
     }
 
-    private static TeachingAssistant createTeachingAssistant(String name, String password, String[] expertise, String[] preferences, String[] timeDetails) {
-        return new TeachingAssistant(
-                name,
-                password,
-                IDCreator.createTeachingAssistantID(),
-                expertise,
-                preferences,
-                timeDetails
-        );
-    }
-
-    private static Task createTeachingTask(String name, double workHours, String[] expertise, String[] preference, String[] timeOccupied, String courseType) {
-        return new TeachingTask(
-                name,
-                IDCreator.createTeachingTaskID(),
-                workHours,
-                expertise,
-                preference,
-                timeOccupied,
-                courseType
-        );
-    }
-
-    private static Task createGradingTask(String name, double workHours, String[] expertise, String[] preference, String[] timeOccupied, int totalPapers) {
-        return new GradingTask(
-                name,
-                IDCreator.createGradingTaskID(),
-                workHours,
-                expertise,
-                preference,
-                timeOccupied,
-                totalPapers
-        );
-    }
-
-    private static void registerNewUserOrTask(Scanner scanner, ScheduleManager manager, Admin admin) {
-        System.out.println();
-        System.out.println("What would you like to register?");
-        System.out.println("1. TeachingAssistant");
-        System.out.println("2. TeachingTask");
-        System.out.println("3. GradingTask");
-        System.out.print("Enter your choice: ");
-
-        String input = scanner.nextLine();
-        int subChoice;
-
-        try {
-            subChoice = Integer.parseInt(input);
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input. Please enter a number.");
-            return;
-        }
-
-        switch (subChoice) {
-            case 1:
-                registerTeachingAssistant(scanner, manager, admin);
-                break;
-            case 2:
-                registerTeachingTask(scanner, manager, admin);
-                break;
-            case 3:
-                registerGradingTask(scanner, manager, admin);
-                break;
-            default:
-                System.out.println("Invalid choice. Please try again.");
-                break;
-        }
-    }
-
-    private static void registerTeachingAssistant(Scanner scanner, ScheduleManager manager, Admin admin) {
-        System.out.println();
-        System.out.println("=== Register TeachingAssistant ===");
-        System.out.print("Enter name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine();
-
-        System.out.print("Enter expertise (comma-separated): ");
-        String[] expertise = parseCommaSeparatedString(scanner.nextLine());
-        System.out.print("Enter preferences (comma-separated): ");
-        String[] preferences = parseCommaSeparatedString(scanner.nextLine());
-        System.out.print("Enter time details (comma-separated, format: Day HH:MM-HH:MM): ");
-        String[] timeDetails = parseCommaSeparatedString(scanner.nextLine());
-
-        TeachingAssistant ta = createTeachingAssistant(name, password, expertise, preferences, timeDetails);
-        manager.registerTeachingAssistant(ta, admin);
-        manager.saveToDatabase();
-        System.out.println("TeachingAssistant registered successfully!");
-        ta.printDetails();
-    }
-
-    private static void registerTeachingTask(Scanner scanner, ScheduleManager manager, Admin admin) {
-        System.out.println();
-        System.out.println("=== Register TeachingTask ===");
-        System.out.print("Enter name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter work hours: ");
-        double workHours = Double.parseDouble(scanner.nextLine());
-
-        System.out.print("Enter expertise (comma-separated): ");
-        String[] expertise = parseCommaSeparatedString(scanner.nextLine());
-        System.out.print("Enter preference (comma-separated): ");
-        String[] preference = parseCommaSeparatedString(scanner.nextLine());
-        System.out.print("Enter time occupied (comma-separated, format: Day HH:MM-HH:MM): ");
-        String[] timeOccupied = parseCommaSeparatedString(scanner.nextLine());
-        System.out.print("Enter course type: ");
-        String courseType = scanner.nextLine();
-
-        Task task = createTeachingTask(name, workHours, expertise, preference, timeOccupied, courseType);
-        manager.registerTask(task, admin);
-        manager.saveToDatabase();
-        System.out.println("TeachingTask registered successfully!");
-        task.printDetails();
-    }
-
-    private static void registerGradingTask(Scanner scanner, ScheduleManager manager, Admin admin) {
-        System.out.println();
-        System.out.println("=== Register GradingTask ===");
-        System.out.print("Enter name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter work hours: ");
-        double workHours = Double.parseDouble(scanner.nextLine());
-
-        System.out.print("Enter expertise (comma-separated): ");
-        String[] expertise = parseCommaSeparatedString(scanner.nextLine());
-        System.out.print("Enter preference (comma-separated): ");
-        String[] preference = parseCommaSeparatedString(scanner.nextLine());
-        System.out.print("Enter time occupied (comma-separated, format: Day HH:MM-HH:MM): ");
-        String[] timeOccupied = parseCommaSeparatedString(scanner.nextLine());
-        System.out.print("Enter total papers: ");
-        int totalPapers = Integer.parseInt(scanner.nextLine());
-
-        Task task = createGradingTask(name, workHours, expertise, preference, timeOccupied, totalPapers);
-        manager.registerTask(task, admin);
-        manager.saveToDatabase();
-        System.out.println("GradingTask registered successfully!");
-        task.printDetails();
-    }
-
-    private static String[] parseCommaSeparatedString(String input) {
-        if (input == null || input.trim().isEmpty()) {
-            return new String[0];
-        }
-        return input.split("\\s*,\\s*");
-    }
 }
