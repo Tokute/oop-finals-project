@@ -22,19 +22,10 @@ public class TimeUtils {
     }
 
     public static int toMinutes(String time) {
-        try {
-            String[] timeGiven = time.split(":");
-            if (timeGiven.length != 2) {
-                throw new IllegalArgumentException("Invalid time format: " + time);
-            }
-            int hour = Integer.parseInt(timeGiven[0]);
-            int minutes = Integer.parseInt(timeGiven[1]);
-            if (hour < 0 || hour > 23 || minutes < 0 || minutes > 59) {
-                throw new IllegalArgumentException("Time out of range: " + time);
-            }
-            return hour * 60 + minutes;
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid time format: " + time, e);
-        }
+        String[] timeGiven = time.split(":");
+        int hour = Integer.parseInt(timeGiven[0]);
+        int minutes = Integer.parseInt(timeGiven[1]);
+
+        return hour * 60 + minutes;
     }
 }
